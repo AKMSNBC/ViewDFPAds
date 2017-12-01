@@ -78,7 +78,7 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
                 }
             }
         }
-        if (adPickerValue == "Interstitial") {
+        if (adPickerValue == Constants.Interstitial) {
             return Constants.DFPInterstitialAdUnitID
         }
         return Constants.DFPAdSizesAdUnitID

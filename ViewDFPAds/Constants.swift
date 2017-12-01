@@ -37,4 +37,6 @@ struct Constants {
     /// DFP Fluid ad size ad unit ID.
     static let DFPFluidAdSizeAdUnitID = "/6499/example/APIDemo/Fluid"
     
+    static let Interstitial = "Interstitial"
+    
 }
