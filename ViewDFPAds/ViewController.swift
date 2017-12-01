@@ -12,7 +12,7 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
     @IBOutlet weak var adUnitTextField: UITextField?
     @IBOutlet weak var displayAdButton: UIButton?
     @IBOutlet weak var adUnitLabel: UILabel?
-    @IBOutlet weak var adPicker: UIPickerView!
+    @IBOutlet weak var adPicker: UIPickerView?
     @IBOutlet weak var addLocationSwitch: UISwitch!
     @IBOutlet weak var addLocationLabel: UILabel!
     @IBOutlet weak var adErrorLabel: UILabel!
@@ -49,8 +49,10 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
     }
     
     fileprivate func initAdPicker() {
-        adPicker.delegate = self
-        adPicker.dataSource = self
+        if let adPicker = adPicker {
+            adPicker.delegate = self
+            adPicker.dataSource = self
+        }
         adPickerData = ["Multi", "300x250", "320x50", "120x20 Custom", "Interstitial"]
         adPickerSelected = adPickerData[0]
     }
