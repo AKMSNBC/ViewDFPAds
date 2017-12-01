@@ -10,8 +10,8 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
 
     //MARK: Properties
     @IBOutlet weak var adUnitTextField: UITextField!
-    @IBOutlet weak var displayAdButton: UIButton!
-    @IBOutlet weak var adUnitLabel: UILabel!
+    @IBOutlet weak var displayAdButton: UIButton?
+    @IBOutlet weak var adUnitLabel: UILabel?
     @IBOutlet weak var adPicker: UIPickerView!
     @IBOutlet weak var addLocationSwitch: UISwitch!
     @IBOutlet weak var addLocationLabel: UILabel!
@@ -96,7 +96,9 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
     
     fileprivate func updateAdUnitIDLabel(adUnitIDValue: String) {
         print("adUnitID: \(adUnitIDValue)")
-        adUnitLabel.text = "adUnitID: \(adUnitIDValue)"
+        if let adUnitLabel = adUnitLabel {
+            adUnitLabel.text = "adUnitID: \(adUnitIDValue)"
+        }
     }
     
     fileprivate func updateAdErrorLabel(description: String) {
@@ -171,11 +173,15 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
     }
     
     func textFieldDidBeginEditing(_ textField: UITextField) {
-        displayAdButton.isHidden = true;
+        if let displayAdButton = displayAdButton {
+            displayAdButton.isHidden = true;
+        }
     }
     
     func textFieldDidEndEditing(_ textField: UITextField) {
-        displayAdButton.isHidden = false;
+        if let displayAdButton = displayAdButton {
+            displayAdButton.isHidden = false;
+        }
         adUnitID = getAdUnitID(adPickerValue: adPickerSelected!)
         updateAdUnitIDLabel(adUnitIDValue: adUnitID)
     }
