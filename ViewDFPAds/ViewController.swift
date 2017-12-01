@@ -9,7 +9,7 @@ import CoreLocation
 class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegate, UIPickerViewDataSource, CLLocationManagerDelegate, GADBannerViewDelegate, GADAdSizeDelegate, GADInterstitialDelegate {
 
     //MARK: Properties
-    @IBOutlet weak var adUnitTextField: UITextField!
+    @IBOutlet weak var adUnitTextField: UITextField?
     @IBOutlet weak var displayAdButton: UIButton?
     @IBOutlet weak var adUnitLabel: UILabel?
     @IBOutlet weak var adPicker: UIPickerView!
@@ -30,8 +30,9 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
         print("Google Mobile Ads SDK version: \(DFPRequest.sdkVersion())")
         
         adErrorLabel.isHidden = true
-        adUnitTextField.delegate = self
-        
+        if let adUnitTextField = adUnitTextField {
+            adUnitTextField.delegate = self
+        }
         updateAdUnitIDLabel(adUnitIDValue: adUnitID)
         initBannerView()
         initAdPicker()
@@ -70,8 +71,12 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
     }
     
     fileprivate func getAdUnitID (adPickerValue: String) -> String {
-        if (adUnitTextField.text != nil && adUnitTextField.text!.isEmpty == false) {
-            return adUnitTextField.text!
+        if let adUnitTextField = adUnitTextField {
+            if let adUnitText = adUnitTextField.text {
+                if (adUnitText.isEmpty == false) {
+                    return adUnitText
+                }
+            }
         }
         if (adPickerValue == "Interstitial") {
             return Constants.DFPInterstitialAdUnitID
