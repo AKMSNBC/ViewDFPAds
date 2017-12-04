@@ -39,4 +39,8 @@ struct Constants {
     
     static let Interstitial = "Interstitial"
     
+    static let ServiceDisabled = "Service Disabled"
+    
+    static let Empty = ""
+    
 }

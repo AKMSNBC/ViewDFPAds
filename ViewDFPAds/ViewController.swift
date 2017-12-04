@@ -13,14 +13,14 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
     @IBOutlet weak var displayAdButton: UIButton?
     @IBOutlet weak var adUnitLabel: UILabel?
     @IBOutlet weak var adPicker: UIPickerView?
-    @IBOutlet weak var addLocationSwitch: UISwitch!
-    @IBOutlet weak var addLocationLabel: UILabel!
-    @IBOutlet weak var adErrorLabel: UILabel!
+    @IBOutlet weak var addLocationSwitch: UISwitch?
+    @IBOutlet weak var addLocationValuesLabel: UILabel?
+    @IBOutlet weak var adErrorLabel: UILabel?
     
     var adPickerData: [String] = [String]()
-    var adPickerSelected: String? = nil
-    var bannerView: DFPBannerView!
-    var interstitial: DFPInterstitial!
+    var adPickerSelected: String = Constants.Empty
+    var bannerView: DFPBannerView?
+    var interstitial: DFPInterstitial?
     var locationManager = CLLocationManager()
     var location: CLLocation? = nil
     var adUnitID = Constants.DFPAdSizesAdUnitID
@@ -29,7 +29,7 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
         super.viewDidLoad()
         print("Google Mobile Ads SDK version: \(DFPRequest.sdkVersion())")
         
-        adErrorLabel.isHidden = true
+        hideAdErrorLabel()
         if let adUnitTextField = adUnitTextField {
             adUnitTextField.delegate = self
         }
@@ -39,16 +39,22 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
         initLocation()
     }
     
-    //MARK: locals
-    fileprivate func initBannerView() {
-        bannerView = DFPBannerView(adSize: kGADAdSizeBanner)
-        bannerView.adUnitID = adUnitID
-        bannerView.rootViewController = self
-        bannerView.adSizeDelegate = self
-        bannerView.delegate = self
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        view.endEditing(true)
     }
     
-    fileprivate func initAdPicker() {
+    //MARK: locals
+    private func initBannerView() {
+        bannerView = DFPBannerView(adSize: kGADAdSizeBanner)
+        if let bannerView = bannerView {
+            bannerView.adUnitID = adUnitID
+            bannerView.rootViewController = self
+            bannerView.adSizeDelegate = self
+            bannerView.delegate = self
+        }
+    }
+    
+    private func initAdPicker() {
         if let adPicker = adPicker {
             adPicker.delegate = self
             adPicker.dataSource = self
@@ -57,99 +63,142 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
         adPickerSelected = adPickerData[0]
     }
     
-    fileprivate func initLocation() {
+    private func initLocation() {
         if (CLLocationManager.locationServicesEnabled()) {
-            locationManager.delegate = self;
+            locationManager.delegate = self
             locationManager.desiredAccuracy = kCLLocationAccuracyBest
             locationManager.requestAlwaysAuthorization()
             locationManager.requestWhenInUseAuthorization()
             locationManager.startUpdatingLocation()
         }
-        addLocationSwitch.addTarget(self, action: #selector(switchChanged), for: UIControlEvents.valueChanged)
-    }
-    
-    @objc fileprivate func switchChanged(sender: UISwitch) {
-        updateAddLocationLabel()
-    }
-    
-    fileprivate func getAdUnitID (adPickerValue: String) -> String {
-        if let adUnitTextField = adUnitTextField {
-            if let adUnitText = adUnitTextField.text {
-                if (adUnitText.isEmpty == false) {
-                    return adUnitText
-                }
-            }
+        if let addLocationSwitch = addLocationSwitch {
+            addLocationSwitch.addTarget(self, action: #selector(switchChanged), for: UIControlEvents.valueChanged)
         }
+    }
+    
+    @objc private func switchChanged(sender: UISwitch) {
+        updateAddLocationValuesLabel()
+    }
+    
+    private func getAdUnitID (adPickerValue: String) -> String {
+        var adUnitId = Constants.DFPAdSizesAdUnitID
         if (adPickerValue == Constants.Interstitial) {
-            return Constants.DFPInterstitialAdUnitID
+            adUnitId = Constants.DFPInterstitialAdUnitID
         }
-        return Constants.DFPAdSizesAdUnitID
+        guard let adUnitTextField = adUnitTextField else {
+            return adUnitId
+        }
+        guard let adUnitTextFieldText = adUnitTextField.text else {
+            return adUnitId
+        }
+        if (adUnitTextFieldText.isEmpty == false) {
+            return adUnitTextFieldText
+        }
+        return adUnitId
     }
     
-    fileprivate func getDFPRequest() -> DFPRequest {
+    private func getDFPRequest() -> DFPRequest {
         let request = DFPRequest()
-        
-        if (addLocationSwitch.isOn && location != nil) {
-            if (CLLocationManager.locationServicesEnabled()) {
-                request.setLocationWithLatitude(CGFloat(location!.coordinate.latitude), longitude: CGFloat(location!.coordinate.latitude), accuracy: 100)
-                updateAddLocationLabel()
-            } else {
-                addLocationLabel.text = "Location Service Disabled"
+        if let addLocationSwitch = addLocationSwitch {
+            if (addLocationSwitch.isOn) {
+                if let location = location {
+                    if (CLLocationManager.locationServicesEnabled()) {
+                        request.setLocationWithLatitude(CGFloat(location.coordinate.latitude), longitude: CGFloat(location.coordinate.latitude), accuracy: 100)
+                        updateAddLocationValuesLabel()
+                    } else {
+                        updateAddLocationValuesLabel(message: Constants.ServiceDisabled)
+                    }
+                }
             }
         }
         print("request \(request.debugDescription)")
         return request
     }
     
-    fileprivate func updateAdUnitIDLabel(adUnitIDValue: String) {
+    private func updateAdUnitIDLabel(adUnitIDValue: String) {
         print("adUnitID: \(adUnitIDValue)")
         if let adUnitLabel = adUnitLabel {
             adUnitLabel.text = "adUnitID: \(adUnitIDValue)"
         }
     }
     
-    fileprivate func updateAdErrorLabel(description: String) {
-        print("adView:didFailToReceiveAdWithError: \(description)")
-        bannerView.removeFromSuperview()
-        adErrorLabel.isHidden = false
-        adErrorLabel.text = description
+    //MARK: AdErrorLabel helpers
+    private func hideAdErrorLabel() {
+        updateAdErrorLabel(isHidden: true, description: Constants.Empty)
     }
     
-    fileprivate func updateAddLocationLabel(){
-        if (addLocationSwitch.isOn && location != nil){
-            addLocationLabel.text = "Add Location: \(location!.coordinate.latitude.description), \(location!.coordinate.longitude.description)"
-        } else {
-            addLocationLabel.text = "Add Location:"
+    private func showAdErrorLabel(description: String) {
+        updateAdErrorLabel(isHidden: false, description: description)
+    }
+    
+    private func updateAdErrorLabel(isHidden: Bool, description: String) {
+        if let adErrorLabel = adErrorLabel {
+            if (isHidden == true) {
+                adErrorLabel.isHidden = true
+                return
+            }
+            print("adView:didFailToReceiveAdWithError: \(description)")
+            if let bannerView = bannerView {
+                bannerView.removeFromSuperview()
+            }
+            adErrorLabel.isHidden = false
+            adErrorLabel.text = description
+            return
         }
     }
     
-    fileprivate func createAndLoadInterstitial(adUnitID: String) {
-        adErrorLabel.isHidden = true
-        interstitial = DFPInterstitial(adUnitID: adUnitID)
-        interstitial.delegate = self
-        let request = getDFPRequest()
-        interstitial.load(request)
+    private func updateAddLocationValuesLabel(message: String) {
+        if let addLocationValuesLabel = addLocationValuesLabel {
+            addLocationValuesLabel.text = message
+        }
     }
     
-    fileprivate func createAndLoadBanner() {
+    private func updateAddLocationValuesLabel() {
+        updateAddLocationValuesLabel(message: Constants.Empty)
+        guard let addLocationSwitch = addLocationSwitch else {
+            return
+        }
+        guard let location = location else {
+            return
+        }
+        if (addLocationSwitch.isOn){
+            let message = "\(location.coordinate.latitude.description), \(location.coordinate.longitude.description)"
+            updateAddLocationValuesLabel(message: message)
+        }
+    }
+    
+    private func createAndLoadInterstitial(adUnitID: String) {
+        hideAdErrorLabel()
+        interstitial = DFPInterstitial(adUnitID: adUnitID)
+        if let interstitial = interstitial {
+            interstitial.delegate = self
+            let request = getDFPRequest()
+            interstitial.load(request)
+        }
+    }
+    
+    private func createAndLoadBanner() {
+        guard let bannerView = bannerView else {
+           return
+        }
+        
         var adSizes = [NSValue]()
         
-        if (adPickerSelected! == "Multi" || adPickerSelected! == "120x20 Custom") {
+        if (adPickerSelected == "Multi" || adPickerSelected == "120x20 Custom") {
             let customGADAdSize = GADAdSizeFromCGSize(CGSize(width: 120, height: 20))
             adSizes.append(NSValueFromGADAdSize(customGADAdSize))
         }
-        if (adPickerSelected! == "Multi" || adPickerSelected! == "320x50") {
+        if (adPickerSelected == "Multi" || adPickerSelected == "320x50") {
             adSizes.append(NSValueFromGADAdSize(kGADAdSizeBanner))
         }
-        if (adPickerSelected! == "Multi" || adPickerSelected! == "300x250") {
+        if (adPickerSelected == "Multi" || adPickerSelected == "300x250") {
             adSizes.append(NSValueFromGADAdSize(kGADAdSizeMediumRectangle))
         }
         
-        adUnitID = getAdUnitID(adPickerValue: adPickerSelected!)
+        adUnitID = getAdUnitID(adPickerValue: adPickerSelected)
         bannerView.adUnitID = adUnitID
         updateAdUnitIDLabel(adUnitIDValue: adUnitID)
         bannerView.validAdSizes = adSizes
-        
         let request = getDFPRequest()
         bannerView.load(request)
     }
@@ -169,7 +218,7 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
     
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
         adPickerSelected = adPickerData[row]
-        adUnitID = getAdUnitID(adPickerValue: adPickerSelected!)
+        adUnitID = getAdUnitID(adPickerValue: adPickerSelected)
         updateAdUnitIDLabel(adUnitIDValue: adUnitID)
     }
     
@@ -181,69 +230,67 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
     
     func textFieldDidBeginEditing(_ textField: UITextField) {
         if let displayAdButton = displayAdButton {
-            displayAdButton.isHidden = true;
+            displayAdButton.isHidden = true
         }
     }
     
     func textFieldDidEndEditing(_ textField: UITextField) {
         if let displayAdButton = displayAdButton {
-            displayAdButton.isHidden = false;
+            displayAdButton.isHidden = false
         }
-        adUnitID = getAdUnitID(adPickerValue: adPickerSelected!)
+        adUnitID = getAdUnitID(adPickerValue: adPickerSelected)
         updateAdUnitIDLabel(adUnitIDValue: adUnitID)
     }
     
     //MARK: Actions
     @IBAction func getDisplayAd(_ sender: UIButton) {
-        
-        if (adPickerSelected == nil) {
+        if (adPickerSelected == Constants.Empty) {
             return
         }
-        
-        if (adPickerSelected! == "Interstitial") {
-            adUnitID = getAdUnitID(adPickerValue: adPickerSelected!)
+        if (adPickerSelected == Constants.Interstitial) {
+            adUnitID = getAdUnitID(adPickerValue: adPickerSelected)
             createAndLoadInterstitial(adUnitID: adUnitID)
             updateAdUnitIDLabel(adUnitIDValue: adUnitID)
             return
         }
-        
         createAndLoadBanner()
     }
     
     //MARK: Location delegate
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        location = locations.last! as CLLocation
+        if let locationsLast = locations.last {
+            location = locationsLast as CLLocation
+        }
     }
     
     //MARK: GADBannerViewDelegate
     // Tells the delegate an ad request loaded an ad.
     func adViewDidReceiveAd(_ bannerView: GADBannerView) {
         print("adViewDidReceiveAd")
-        adErrorLabel.isHidden = true
+        hideAdErrorLabel()
         view.addSubview(bannerView)
         bannerView.translatesAutoresizingMaskIntoConstraints = false
-        
-        // Layout constraints that align the banner view to the bottom center of the screen.
-        view.addConstraint(NSLayoutConstraint(item: bannerView, attribute: .bottom, relatedBy: .equal,
-                                              toItem: bottomLayoutGuide, attribute: .top, multiplier: 1, constant: 0))
-        view.addConstraint(NSLayoutConstraint(item: bannerView, attribute: .centerX, relatedBy: .equal,
-                                              toItem: view, attribute: .centerX, multiplier: 1, constant: 0))
+        let guide = view.safeAreaLayoutGuide
+        NSLayoutConstraint.activate([guide.bottomAnchor.constraintEqualToSystemSpacingBelow(bannerView.bottomAnchor, multiplier: 1.0),
+                                     guide.centerXAnchor.constraintEqualToSystemSpacingAfter(bannerView.centerXAnchor, multiplier: 1.0)])
     }
     
     // Tells the delegate an ad request failed.
     func adView(_ bannerView: GADBannerView, didFailToReceiveAdWithError error: GADRequestError) {
-        updateAdErrorLabel(description: error.localizedDescription)
+        showAdErrorLabel(description: error.localizedDescription)
     }
 
     //MARK: GADInterstitialDelegate
     func interstitialDidReceiveAd(_ ad: GADInterstitial) {
-        if (interstitial.isReady) {
-            interstitial.present(fromRootViewController: self)
+        if let interstitial = interstitial {
+            if (interstitial.isReady) {
+                interstitial.present(fromRootViewController: self)
+            }
         }
     }
     
     func interstitial(_ ad: GADInterstitial, didFailToReceiveAdWithError error: GADRequestError) {
-        updateAdErrorLabel(description: error.localizedDescription)
+        showAdErrorLabel(description: error.localizedDescription)
     }
     
     // MARK: GADAdSizeDelegate
