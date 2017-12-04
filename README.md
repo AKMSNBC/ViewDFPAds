@@ -28,4 +28,4 @@ the release of the iOS example apps.
 [https://developers.google.com/mobile-ads-sdk/docs/dfp/ios/quick-start](https://developers.google.com/mobile-ads-sdk/docs/dfp/ios/quick-start)
 
 #Instructions
-!(/images/iphone5s.png)
+![iphone5s screenshot](/images/iphone5s.png)
