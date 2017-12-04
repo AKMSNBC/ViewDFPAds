@@ -30,10 +30,11 @@ the release of the iOS example apps.
 # Screen Shot instructions
 
 Launch screens on iPhone 5s and iPhone 8.
-
 ![iphone5s screenshot](/images/iphone5s.png)
 ![iphone8 screenshot](/images/iphone8.png)
 
 Touch `Display Ad` button to show default ad.
-
 ![iphone8defaultad screenshot](/images/iphone8defaultad.png)
+
+Enter custom AdUnit Id
+![iphone8adunitscreenshot](/images/iphone8adunit.png)
