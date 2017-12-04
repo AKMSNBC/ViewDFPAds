@@ -29,3 +29,4 @@ the release of the iOS example apps.
 
 #Instructions
 ![iphone5s screenshot](/images/iphone5s.png)
+![iphone8 screenshot](/images/iphone8.png)
