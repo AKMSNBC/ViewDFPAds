@@ -40,4 +40,20 @@ Touch `Display Ad` button to show default ad.
 
 Enter custom AdUnit Id.
 
-![iphone8adunitscreenshot](/images/iphone8adunit.png)
+![iphone8adunit screenshot](/images/iphone8adunit.png)
+
+Use picker to select ad type.
+
+![iphone8picker creenshot](/images/iphone8picker.png)
+
+Example error message.
+
+![iphone8error creenshot](/images/iphone8error.png)
+
+Example interstitial ad.
+
+![iphone8interstitial creenshot](/images/iphone8interstitial.png)
+
+Add location data to ad request.
+
+![iphone8location screenshot](/images/iphone8location.png)
