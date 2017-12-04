@@ -27,7 +27,14 @@ the release of the iOS example apps.
 # References
 [https://developers.google.com/mobile-ads-sdk/docs/dfp/ios/quick-start](https://developers.google.com/mobile-ads-sdk/docs/dfp/ios/quick-start)
 
-# Instructions
+# Screen Shot instructions
+
+Launch screens on iPhone 5s and iPhone 8.
+
 ![iphone5s screenshot](/images/iphone5s.png)
 
 ![iphone8 screenshot](/images/iphone8.png)
+
+Touch Display Ad button to show default ad.
+
+![iphone8defaultad screenshot](/images/iphone8defaultad.png)
