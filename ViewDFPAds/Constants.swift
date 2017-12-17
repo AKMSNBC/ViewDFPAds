@@ -4,6 +4,7 @@
 //
 
 import Foundation
+import GoogleMobileAds
 
 struct Constants {
     
@@ -43,4 +44,16 @@ struct Constants {
     
     static let Empty = ""
     
+    static let adSizesInterstitial = [NSValue]()
+    static let adSize120x20 = [NSValueFromGADAdSize(GADAdSizeFromCGSize(CGSize(width: 120, height: 20)))]
+    static let adSize300x50 = [NSValueFromGADAdSize(kGADAdSizeBanner)]
+    static let adSize300x250 = [NSValueFromGADAdSize(kGADAdSizeMediumRectangle)]
+    static let adSizeMulti = Constants.adSize120x20 + Constants.adSize300x50 + Constants.adSize300x250
+    
+    static let AdPickerDictionaryLiteral: DictionaryLiteral = [
+        "Multi" : Constants.adSizeMulti,
+        "320x50" : Constants.adSize300x50,
+        "300x250" : Constants.adSize300x250,
+        "120x20 Custom " : Constants.adSize120x20,
+        "Interstitial" : Constants.adSizesInterstitial]
 }
