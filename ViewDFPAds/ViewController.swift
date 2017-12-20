@@ -283,49 +283,7 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
         }
     }
     
-    //MARK: GADBannerViewDelegate
-    // Tells the delegate an ad request loaded an ad.
-    func adViewDidReceiveAd(_ bannerView: GADBannerView) {
-        print("adViewDidReceiveAd: \(bannerView)")
-        hideAdErrorLabel()
-        if let adResponseScrollView = adResponseScrollView {
-            adResponseScrollView.contentOffset = CGPoint.zero
-            let adResponseView = UIView(frame: adResponseScrollView.bounds)
-            adResponseView.addSubview(bannerView)
-            bannerView.translatesAutoresizingMaskIntoConstraints = false
-            let guide = adResponseView.safeAreaLayoutGuide
-            NSLayoutConstraint.activate([guide.topAnchor.constraint(equalTo: bannerView.topAnchor, constant: -5),
-                                         guide.centerXAnchor.constraintEqualToSystemSpacingAfter(bannerView.centerXAnchor, multiplier: 1.0)])
-            if let msgLabel = msgLabel {
-                var msg = "";
-                if let adUnitId = bannerView.adUnitID {
-                    msg += "\nadUnitId: \(adUnitId)"
-                }
-                msg += "\nadSize: \(bannerView.adSize.size)"
-                if let adNetworkClassname = bannerView.adNetworkClassName {
-                    msg += "\nadNetworkClassName: \(adNetworkClassname)"
-                }
-                msgLabel.text = msg
-                msgLabel.textAlignment = NSTextAlignment.left
-                msgLabel.numberOfLines = 0
-                msgLabel.translatesAutoresizingMaskIntoConstraints = false
-                adResponseView.addSubview(msgLabel)
-                NSLayoutConstraint.activate([bannerView.bottomAnchor.constraint(equalTo: msgLabel.topAnchor, constant: -5),
-                                             guide.centerXAnchor.constraintEqualToSystemSpacingAfter(msgLabel.centerXAnchor, multiplier: 1.0),
-                                             guide.leftAnchor.constraint(equalTo: msgLabel.leftAnchor, constant: -15),
-                                             guide.rightAnchor.constraint(equalTo: msgLabel.rightAnchor, constant: 15)])
-                
-                adResponseScrollView.contentSize = adResponseView.bounds.size
-                adResponseScrollView.contentSize.height = adResponseScrollView.bounds.height + 100
-                adResponseScrollView.autoresizingMask = UIViewAutoresizing.flexibleHeight
-                adResponseScrollView.addSubview(adResponseView)
-                print("adResponseScrollView: \(adResponseScrollView.bounds.size)")
-                print("msgLabel: \(msgLabel.bounds.size)")
-                print("adResponseView: \(adResponseView.bounds.size)")
-            }
-        }
-    }
-    
+    //MARK: UIScrollViewDelegate
     func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
         var height: CGFloat = 0
         if let bannerView = bannerView {
@@ -340,6 +298,55 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
             if (height > (adResponseScrollView.bounds.height + 100)) {
                 scrollView.contentSize.height = height
             }
+        }
+    }
+    
+    private func addMessageToAdResponseView(msg: String, adResponseView: UIView, msgLabelTopAnchor: NSLayoutYAxisAnchor) {
+        if let msgLabel = msgLabel {
+            msgLabel.text = msg
+            msgLabel.textAlignment = NSTextAlignment.left
+            msgLabel.numberOfLines = 0
+            msgLabel.translatesAutoresizingMaskIntoConstraints = false
+            adResponseView.addSubview(msgLabel)
+            let guide = adResponseView.safeAreaLayoutGuide
+            NSLayoutConstraint.activate([msgLabelTopAnchor.constraint(equalTo: msgLabel.topAnchor, constant: -5),
+                                         guide.centerXAnchor.constraintEqualToSystemSpacingAfter(msgLabel.centerXAnchor, multiplier: 1.0),
+                                         guide.leftAnchor.constraint(equalTo: msgLabel.leftAnchor, constant: -15),
+                                         guide.rightAnchor.constraint(equalTo: msgLabel.rightAnchor, constant: 15)])
+            
+            print("msgLabel: \(msgLabel.bounds.size)")
+            print("adResponseView: \(adResponseView.bounds.size)")
+        }
+    }
+    
+    //MARK: GADBannerViewDelegate
+    // Tells the delegate an ad request loaded an ad.
+    func adViewDidReceiveAd(_ bannerView: GADBannerView) {
+        print("adViewDidReceiveAd: \(bannerView)")
+        hideAdErrorLabel()
+        if let adResponseScrollView = adResponseScrollView {
+            adResponseScrollView.contentOffset = CGPoint.zero
+            let adResponseView = UIView(frame: adResponseScrollView.bounds)
+            adResponseView.addSubview(bannerView)
+            bannerView.translatesAutoresizingMaskIntoConstraints = false
+            let guide = adResponseView.safeAreaLayoutGuide
+            NSLayoutConstraint.activate([guide.topAnchor.constraint(equalTo: bannerView.topAnchor, constant: -5),
+                                         guide.centerXAnchor.constraintEqualToSystemSpacingAfter(bannerView.centerXAnchor, multiplier: 1.0)])
+            
+            var msg = "";
+            if let adUnitId = bannerView.adUnitID {
+                msg += "\nadUnitId: \(adUnitId)"
+            }
+            msg += "\nadSize: \(bannerView.adSize.size)"
+            if let adNetworkClassname = bannerView.adNetworkClassName {
+                msg += "\nadNetworkClassName: \(adNetworkClassname)"
+            }
+            addMessageToAdResponseView(msg: msg, adResponseView: adResponseView, msgLabelTopAnchor: bannerView.bottomAnchor)
+            adResponseScrollView.contentSize = adResponseView.bounds.size
+            adResponseScrollView.contentSize.height = adResponseScrollView.bounds.height + 100
+            adResponseScrollView.autoresizingMask = UIViewAutoresizing.flexibleHeight
+            adResponseScrollView.addSubview(adResponseView)
+            print("adResponseScrollView: \(adResponseScrollView.bounds.size)")
         }
     }
     
@@ -361,30 +368,20 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
                     adResponseScrollView.contentOffset = CGPoint.zero
                     let adResponseView = UIView(frame: adResponseScrollView.bounds)
                     let guide = adResponseView.safeAreaLayoutGuide
-                    if let msgLabel = msgLabel {
-                        var msg = "";
-                        msg += "\nadUnitId: \(interstitial.adUnitID)"
-                        if let correlator = interstitial.correlator {
-                           msg += "\ncorrelator: \(correlator)"
-                        }
-                        if let adNetworkClassname = interstitial.adNetworkClassName {
-                            msg += "\nadNetworkClassName: \(adNetworkClassname)"
-                        }
-                        msgLabel.text = msg
-                        msgLabel.textAlignment = NSTextAlignment.left
-                        msgLabel.numberOfLines = 0
-                        msgLabel.translatesAutoresizingMaskIntoConstraints = false
-                        adResponseView.addSubview(msgLabel)
-                        NSLayoutConstraint.activate([guide.topAnchor.constraint(equalTo: msgLabel.topAnchor, constant: -5),
-                                                     guide.centerXAnchor.constraintEqualToSystemSpacingAfter(msgLabel.centerXAnchor, multiplier: 1.0),
-                                                     guide.leftAnchor.constraint(equalTo: msgLabel.leftAnchor, constant: -15),
-                                                     guide.rightAnchor.constraint(equalTo: msgLabel.rightAnchor, constant: 15)])
-                        
-                        adResponseScrollView.contentSize = adResponseView.bounds.size
-                        adResponseScrollView.contentSize.height = adResponseScrollView.bounds.height + 100
-                        adResponseScrollView.autoresizingMask = UIViewAutoresizing.flexibleHeight
-                        adResponseScrollView.addSubview(adResponseView)
+                    
+                    var msg = "";
+                    msg += "\nadUnitId: \(interstitial.adUnitID)"
+                    if let correlator = interstitial.correlator {
+                        msg += "\ncorrelator: \(correlator)"
                     }
+                    if let adNetworkClassname = interstitial.adNetworkClassName {
+                        msg += "\nadNetworkClassName: \(adNetworkClassname)"
+                    }
+                    addMessageToAdResponseView(msg: msg, adResponseView: adResponseView, msgLabelTopAnchor: guide.topAnchor)
+                    adResponseScrollView.contentSize = adResponseView.bounds.size
+                    adResponseScrollView.contentSize.height = adResponseScrollView.bounds.height + 100
+                    adResponseScrollView.autoresizingMask = UIViewAutoresizing.flexibleHeight
+                    adResponseScrollView.addSubview(adResponseView)
                 }
             }
         }
