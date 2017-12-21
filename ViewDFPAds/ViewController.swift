@@ -319,35 +319,39 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
         }
     }
     
-    //MARK: GADBannerViewDelegate
-    // Tells the delegate an ad request loaded an ad.
-    func adViewDidReceiveAd(_ bannerView: GADBannerView) {
-        print("adViewDidReceiveAd: \(bannerView)")
-        hideAdErrorLabel()
+    private func adResponseScrollViewAddSubview(adResponseView: UIView) {
         if let adResponseScrollView = adResponseScrollView {
             adResponseScrollView.contentOffset = CGPoint.zero
-            let adResponseView = UIView(frame: adResponseScrollView.bounds)
-            adResponseView.addSubview(bannerView)
-            bannerView.translatesAutoresizingMaskIntoConstraints = false
-            let guide = adResponseView.safeAreaLayoutGuide
-            NSLayoutConstraint.activate([guide.topAnchor.constraint(equalTo: bannerView.topAnchor, constant: -5),
-                                         guide.centerXAnchor.constraintEqualToSystemSpacingAfter(bannerView.centerXAnchor, multiplier: 1.0)])
-            
-            var msg = "";
-            if let adUnitId = bannerView.adUnitID {
-                msg += "\nadUnitId: \(adUnitId)"
-            }
-            msg += "\nadSize: \(bannerView.adSize.size)"
-            if let adNetworkClassname = bannerView.adNetworkClassName {
-                msg += "\nadNetworkClassName: \(adNetworkClassname)"
-            }
-            addMessageToAdResponseView(msg: msg, adResponseView: adResponseView, msgLabelTopAnchor: bannerView.bottomAnchor)
+            adResponseView.frame = adResponseScrollView.bounds
             adResponseScrollView.contentSize = adResponseView.bounds.size
             adResponseScrollView.contentSize.height = adResponseScrollView.bounds.height + 100
             adResponseScrollView.autoresizingMask = UIViewAutoresizing.flexibleHeight
             adResponseScrollView.addSubview(adResponseView)
             print("adResponseScrollView: \(adResponseScrollView.bounds.size)")
         }
+    }
+    
+    //MARK: GADBannerViewDelegate
+    // Tells the delegate an ad request loaded an ad.
+    func adViewDidReceiveAd(_ bannerView: GADBannerView) {
+        print("adViewDidReceiveAd: \(bannerView)")
+        hideAdErrorLabel()
+        let adResponseView = UIView()
+        adResponseView.addSubview(bannerView)
+        bannerView.translatesAutoresizingMaskIntoConstraints = false
+        let guide = adResponseView.safeAreaLayoutGuide
+        NSLayoutConstraint.activate([guide.topAnchor.constraint(equalTo: bannerView.topAnchor, constant: -5),
+                                     guide.centerXAnchor.constraintEqualToSystemSpacingAfter(bannerView.centerXAnchor, multiplier: 1.0)])
+        var msg = "";
+        if let adUnitId = bannerView.adUnitID {
+            msg += "\nadUnitId: \(adUnitId)"
+        }
+        msg += "\nadSize: \(bannerView.adSize.size)"
+        if let adNetworkClassname = bannerView.adNetworkClassName {
+            msg += "\nadNetworkClassName: \(adNetworkClassname)"
+        }
+        addMessageToAdResponseView(msg: msg, adResponseView: adResponseView, msgLabelTopAnchor: bannerView.bottomAnchor)
+        adResponseScrollViewAddSubview(adResponseView: adResponseView)
     }
     
     // Tells the delegate an ad request failed.
