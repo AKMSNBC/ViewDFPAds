@@ -368,25 +368,18 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
                 if let bannerView = bannerView {
                     bannerView.removeFromSuperview()
                 }
-                if let adResponseScrollView = adResponseScrollView {
-                    adResponseScrollView.contentOffset = CGPoint.zero
-                    let adResponseView = UIView(frame: adResponseScrollView.bounds)
-                    let guide = adResponseView.safeAreaLayoutGuide
-                    
-                    var msg = "";
-                    msg += "\nadUnitId: \(interstitial.adUnitID)"
-                    if let correlator = interstitial.correlator {
-                        msg += "\ncorrelator: \(correlator)"
-                    }
-                    if let adNetworkClassname = interstitial.adNetworkClassName {
-                        msg += "\nadNetworkClassName: \(adNetworkClassname)"
-                    }
-                    addMessageToAdResponseView(msg: msg, adResponseView: adResponseView, msgLabelTopAnchor: guide.topAnchor)
-                    adResponseScrollView.contentSize = adResponseView.bounds.size
-                    adResponseScrollView.contentSize.height = adResponseScrollView.bounds.height + 100
-                    adResponseScrollView.autoresizingMask = UIViewAutoresizing.flexibleHeight
-                    adResponseScrollView.addSubview(adResponseView)
+                let adResponseView = UIView()
+                let guide = adResponseView.safeAreaLayoutGuide
+                var msg = "";
+                msg += "\nadUnitId: \(interstitial.adUnitID)"
+                if let correlator = interstitial.correlator {
+                    msg += "\ncorrelator: \(correlator)"
                 }
+                if let adNetworkClassname = interstitial.adNetworkClassName {
+                    msg += "\nadNetworkClassName: \(adNetworkClassname)"
+                }
+                addMessageToAdResponseView(msg: msg, adResponseView: adResponseView, msgLabelTopAnchor: guide.topAnchor)
+                adResponseScrollViewAddSubview(adResponseView: adResponseView)
             }
         }
     }
