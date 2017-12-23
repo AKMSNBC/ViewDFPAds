@@ -319,7 +319,7 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
         }
     }
     
-    private func adResponseScrollViewAddSubview(adResponseView: UIView) {
+    private func adResponseScrollViewUpdate(adResponseView: UIView) {
         if let adResponseScrollView = adResponseScrollView {
             adResponseScrollView.contentOffset = CGPoint.zero
             adResponseView.frame = adResponseScrollView.bounds
@@ -351,7 +351,7 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
             msg += "\nadNetworkClassName: \(adNetworkClassname)"
         }
         addMessageToAdResponseView(msg: msg, adResponseView: adResponseView, msgLabelTopAnchor: bannerView.bottomAnchor)
-        adResponseScrollViewAddSubview(adResponseView: adResponseView)
+        adResponseScrollViewUpdate(adResponseView: adResponseView)
     }
     
     // Tells the delegate an ad request failed.
@@ -379,7 +379,7 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
                     msg += "\nadNetworkClassName: \(adNetworkClassname)"
                 }
                 addMessageToAdResponseView(msg: msg, adResponseView: adResponseView, msgLabelTopAnchor: guide.topAnchor)
-                adResponseScrollViewAddSubview(adResponseView: adResponseView)
+                adResponseScrollViewUpdate(adResponseView: adResponseView)
             }
         }
     }
