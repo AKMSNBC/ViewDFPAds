@@ -10,7 +10,6 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
 
     //MARK: Properties
     @IBOutlet weak var adUnitTextField: UITextField?
-    @IBOutlet weak var displayAdButton: UIButton?
     @IBOutlet weak var adPicker: UIPickerView?
     @IBOutlet weak var addLocationSwitch: UISwitch?
     @IBOutlet weak var addLocationValuesLabel: UILabel?
@@ -62,7 +61,7 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
         view.endEditing(true)
     }
     
-    //MARK: initializations
+    //MARK: init methods
     private func initLabels() {
         adErrorLabel = UILabel()
         msgLabel = UILabel()
@@ -70,7 +69,7 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
     
     private func initAdUnitTextField() {
         if let adUnitTextField = adUnitTextField {
-            updateAdUnitTextFieldPlaceholder()
+            adUnitTextFieldPlaceholderUpdate()
             adUnitTextField.delegate = self
         }
     }
@@ -116,7 +115,7 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
         }
     }
     
-    private func updateAdUnitTextFieldPlaceholder() {
+    private func adUnitTextFieldPlaceholderUpdate() {
         if let adUnitTextField = adUnitTextField {
             if (adPickerSelected == Constants.Interstitial) {
                 adUnitTextField.placeholder = Constants.DFPInterstitialAdUnitID
@@ -128,7 +127,7 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
     
     
     @objc private func switchChanged(sender: UISwitch) {
-        updateAddLocationValuesLabel()
+        addLocationValuesLabelUpdate()
     }
     
     private func getAdUnitID (adPickerValue: String) -> String {
@@ -155,9 +154,9 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
                 if let location = location {
                     if (CLLocationManager.locationServicesEnabled()) {
                         request.setLocationWithLatitude(CGFloat(location.coordinate.latitude), longitude: CGFloat(location.coordinate.latitude), accuracy: 100)
-                        updateAddLocationValuesLabel()
+                        addLocationValuesLabelUpdate()
                     } else {
-                        updateAddLocationValuesLabel(message: Constants.ServiceDisabled)
+                        addLocationValuesLabelUpdate(message: Constants.ServiceDisabled)
                     }
                 }
             }
@@ -166,6 +165,7 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
         return request
     }
     
+    //MARK: adResponseScrollView Helpers
     private func adResponseScrollViewClear() {
         if let adResponseScrollView = adResponseScrollView {
             for view in adResponseScrollView.subviews{
@@ -174,16 +174,45 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
         }
     }
     
+    private func adResponseScrollViewUpdate(adResponseView: UIView) {
+        if let adResponseScrollView = adResponseScrollView {
+            adResponseScrollView.contentOffset = CGPoint.zero
+            adResponseView.frame = adResponseScrollView.bounds
+            adResponseScrollView.contentSize = adResponseView.bounds.size
+            adResponseScrollView.contentSize.height = adResponseScrollView.bounds.height + 100
+            adResponseScrollView.autoresizingMask = UIViewAutoresizing.flexibleHeight
+            adResponseScrollView.addSubview(adResponseView)
+            print("adResponseScrollView: \(adResponseScrollView.bounds.size)")
+        }
+    }
+    
+    //MARK: adResponseView Helpers
+    private func adResponseViewUpdate(msg: String, adResponseView: UIView, msgLabelTopAnchor: NSLayoutYAxisAnchor) {
+        if let msgLabel = msgLabel {
+            msgLabel.text = msg
+            msgLabel.textAlignment = NSTextAlignment.left
+            msgLabel.numberOfLines = 0
+            msgLabel.translatesAutoresizingMaskIntoConstraints = false
+            adResponseView.addSubview(msgLabel)
+            let guide = adResponseView.safeAreaLayoutGuide
+            NSLayoutConstraint.activate([msgLabelTopAnchor.constraint(equalTo: msgLabel.topAnchor, constant: -5),
+                                         guide.centerXAnchor.constraintEqualToSystemSpacingAfter(msgLabel.centerXAnchor, multiplier: 1.0),
+                                         guide.leftAnchor.constraint(equalTo: msgLabel.leftAnchor, constant: -15),
+                                         guide.rightAnchor.constraint(equalTo: msgLabel.rightAnchor, constant: 15)])
+            
+            print("msgLabel: \(msgLabel.bounds.size)")
+            print("adResponseView: \(adResponseView.bounds.size)")
+        }
+        adResponseScrollViewUpdate(adResponseView: adResponseView)
+    }
+
     //MARK: AdErrorLabel helpers
-    private func showAdErrorLabel(description: String) {
+    private func adErrorLabelUpdate(description: String) {
         guard let adResponseScrollView = adResponseScrollView else {
             return
         }
         guard let adErrorLabel = adErrorLabel else {
             return
-        }
-        if let bannerView = bannerView {
-            bannerView.removeFromSuperview()
         }
         adResponseScrollView.addSubview(adErrorLabel)
         adErrorLabel.text = description
@@ -196,14 +225,14 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
                                      guide.rightAnchor.constraint(equalTo: adErrorLabel.rightAnchor, constant: 15)])
     }
     
-    private func updateAddLocationValuesLabel(message: String) {
+    private func addLocationValuesLabelUpdate(message: String) {
         if let addLocationValuesLabel = addLocationValuesLabel {
             addLocationValuesLabel.text = message
         }
     }
     
-    private func updateAddLocationValuesLabel() {
-        updateAddLocationValuesLabel(message: Constants.Empty)
+    private func addLocationValuesLabelUpdate() {
+        addLocationValuesLabelUpdate(message: Constants.Empty)
         guard let addLocationSwitch = addLocationSwitch else {
             return
         }
@@ -212,16 +241,7 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
         }
         if (addLocationSwitch.isOn){
             let message = "\(location.coordinate.latitude.description), \(location.coordinate.longitude.description)"
-            updateAddLocationValuesLabel(message: message)
-        }
-    }
-    
-    private func createAndLoadInterstitial(adUnitID: String) {
-        interstitial = DFPInterstitial(adUnitID: adUnitID)
-        if let interstitial = interstitial {
-            interstitial.delegate = self
-            let request = getDFPRequest()
-            interstitial.load(request)
+            addLocationValuesLabelUpdate(message: message)
         }
     }
     
@@ -237,15 +257,23 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
     }
     
     private func createAndLoadBanner() {
-        guard let bannerView = bannerView else {
-           return
+        if let bannerView = bannerView {
+            let adSizes = getAdSizes(adPickerValue: adPickerSelected)
+            adUnitID = getAdUnitID(adPickerValue: adPickerSelected)
+            bannerView.adUnitID = adUnitID
+            bannerView.validAdSizes = adSizes
+            let request = getDFPRequest()
+            bannerView.load(request)
         }
-        let adSizes = getAdSizes(adPickerValue: adPickerSelected)
-        adUnitID = getAdUnitID(adPickerValue: adPickerSelected)
-        bannerView.adUnitID = adUnitID
-        bannerView.validAdSizes = adSizes
-        let request = getDFPRequest()
-        bannerView.load(request)
+    }
+    
+    private func createAndLoadInterstitial(adUnitID: String) {
+        interstitial = DFPInterstitial(adUnitID: adUnitID)
+        if let interstitial = interstitial {
+            interstitial.delegate = self
+            let request = getDFPRequest()
+            interstitial.load(request)
+        }
     }
     
     //MARK: Picker
@@ -264,10 +292,17 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
         adPickerSelected = adPickerData[row]
         adUnitID = getAdUnitID(adPickerValue: adPickerSelected)
-        updateAdUnitTextFieldPlaceholder()
+        adUnitTextFieldPlaceholderUpdate()
     }
     
-    //MARK: UITextFieldDelegate
+    //MARK: Location delegate
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        if let locationsLast = locations.last {
+            location = locationsLast as CLLocation
+        }
+    }
+    
+    //MARK: UITextFieldDelegates
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
         return true
@@ -278,13 +313,6 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
     
     func textFieldDidEndEditing(_ textField: UITextField) {
         adUnitID = getAdUnitID(adPickerValue: adPickerSelected)
-    }
-    
-    //MARK: Location delegate
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        if let locationsLast = locations.last {
-            location = locationsLast as CLLocation
-        }
     }
     
     //MARK: UIScrollViewDelegate
@@ -302,36 +330,6 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
             if (height > (adResponseScrollView.bounds.height + 100)) {
                 scrollView.contentSize.height = height
             }
-        }
-    }
-    
-    private func adResponseViewUpdate(msg: String, adResponseView: UIView, msgLabelTopAnchor: NSLayoutYAxisAnchor) {
-        if let msgLabel = msgLabel {
-            msgLabel.text = msg
-            msgLabel.textAlignment = NSTextAlignment.left
-            msgLabel.numberOfLines = 0
-            msgLabel.translatesAutoresizingMaskIntoConstraints = false
-            adResponseView.addSubview(msgLabel)
-            let guide = adResponseView.safeAreaLayoutGuide
-            NSLayoutConstraint.activate([msgLabelTopAnchor.constraint(equalTo: msgLabel.topAnchor, constant: -5),
-                                         guide.centerXAnchor.constraintEqualToSystemSpacingAfter(msgLabel.centerXAnchor, multiplier: 1.0),
-                                         guide.leftAnchor.constraint(equalTo: msgLabel.leftAnchor, constant: -15),
-                                         guide.rightAnchor.constraint(equalTo: msgLabel.rightAnchor, constant: 15)])
-            
-            print("msgLabel: \(msgLabel.bounds.size)")
-            print("adResponseView: \(adResponseView.bounds.size)")
-        }
-    }
-    
-    private func adResponseScrollViewUpdate(adResponseView: UIView) {
-        if let adResponseScrollView = adResponseScrollView {
-            adResponseScrollView.contentOffset = CGPoint.zero
-            adResponseView.frame = adResponseScrollView.bounds
-            adResponseScrollView.contentSize = adResponseView.bounds.size
-            adResponseScrollView.contentSize.height = adResponseScrollView.bounds.height + 100
-            adResponseScrollView.autoresizingMask = UIViewAutoresizing.flexibleHeight
-            adResponseScrollView.addSubview(adResponseView)
-            print("adResponseScrollView: \(adResponseScrollView.bounds.size)")
         }
     }
     
@@ -354,12 +352,11 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
             msg += "\nadNetworkClassName: \(adNetworkClassname)"
         }
         adResponseViewUpdate(msg: msg, adResponseView: adResponseView, msgLabelTopAnchor: bannerView.bottomAnchor)
-        adResponseScrollViewUpdate(adResponseView: adResponseView)
     }
     
     // Tells the delegate an ad request failed.
     func adView(_ bannerView: GADBannerView, didFailToReceiveAdWithError error: GADRequestError) {
-        showAdErrorLabel(description: error.localizedDescription)
+        adErrorLabelUpdate(description: error.localizedDescription)
     }
     
     // MARK: GADAdSizeDelegate
@@ -370,14 +367,11 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
         print("Make your app layout changes here, if necessary. New banner ad size will be \(size).")
     }
     
-    //MARK: GADInterstitialDelegate
+    //MARK: GADInterstitialDelegates
     func interstitialDidReceiveAd(_ ad: GADInterstitial) {
         if let interstitial = interstitial {
             if (interstitial.isReady) {
                 interstitial.present(fromRootViewController: self)
-                if let bannerView = bannerView {
-                    bannerView.removeFromSuperview()
-                }
                 let adResponseView = UIView()
                 let guide = adResponseView.safeAreaLayoutGuide
                 var msg = "";
@@ -389,12 +383,11 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
                     msg += "\nadNetworkClassName: \(adNetworkClassname)"
                 }
                 adResponseViewUpdate(msg: msg, adResponseView: adResponseView, msgLabelTopAnchor: guide.topAnchor)
-                adResponseScrollViewUpdate(adResponseView: adResponseView)
             }
         }
     }
     
     func interstitial(_ ad: GADInterstitial, didFailToReceiveAdWithError error: GADRequestError) {
-        showAdErrorLabel(description: error.localizedDescription)
+        adErrorLabelUpdate(description: error.localizedDescription)
     }
 }

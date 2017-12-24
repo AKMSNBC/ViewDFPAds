@@ -110,7 +110,6 @@
                         <outlet property="adUnitTextField" destination="1dn-Rb-yy8" id="gaW-1S-aC1"/>
                         <outlet property="addLocationSwitch" destination="XsA-6f-onU" id="aIT-Vu-ScK"/>
                         <outlet property="addLocationValuesLabel" destination="AAP-RP-OQF" id="P4h-ul-FI5"/>
-                        <outlet property="displayAdButton" destination="86u-Vd-NTM" id="tCG-c0-4EE"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
