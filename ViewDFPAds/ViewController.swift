@@ -305,7 +305,7 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
         }
     }
     
-    private func addMessageToAdResponseView(msg: String, adResponseView: UIView, msgLabelTopAnchor: NSLayoutYAxisAnchor) {
+    private func adResponseViewUpdate(msg: String, adResponseView: UIView, msgLabelTopAnchor: NSLayoutYAxisAnchor) {
         if let msgLabel = msgLabel {
             msgLabel.text = msg
             msgLabel.textAlignment = NSTextAlignment.left
@@ -353,7 +353,7 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
         if let adNetworkClassname = bannerView.adNetworkClassName {
             msg += "\nadNetworkClassName: \(adNetworkClassname)"
         }
-        addMessageToAdResponseView(msg: msg, adResponseView: adResponseView, msgLabelTopAnchor: bannerView.bottomAnchor)
+        adResponseViewUpdate(msg: msg, adResponseView: adResponseView, msgLabelTopAnchor: bannerView.bottomAnchor)
         adResponseScrollViewUpdate(adResponseView: adResponseView)
     }
     
@@ -388,7 +388,7 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
                 if let adNetworkClassname = interstitial.adNetworkClassName {
                     msg += "\nadNetworkClassName: \(adNetworkClassname)"
                 }
-                addMessageToAdResponseView(msg: msg, adResponseView: adResponseView, msgLabelTopAnchor: guide.topAnchor)
+                adResponseViewUpdate(msg: msg, adResponseView: adResponseView, msgLabelTopAnchor: guide.topAnchor)
                 adResponseScrollViewUpdate(adResponseView: adResponseView)
             }
         }
