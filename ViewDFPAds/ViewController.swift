@@ -18,6 +18,7 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
     
     //MARK: Actions
     @IBAction func getDisplayAd(_ sender: UIButton) {
+        adResponseScrollViewClear()
         if (adPickerSelected == Constants.Empty) {
             return
         }
@@ -165,13 +166,15 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
         return request
     }
     
-    //MARK: AdErrorLabel helpers
-    private func hideAdErrorLabel() {
-        if let adErrorLabel = adErrorLabel {
-            adErrorLabel.removeFromSuperview()
+    private func adResponseScrollViewClear() {
+        if let adResponseScrollView = adResponseScrollView {
+            for view in adResponseScrollView.subviews{
+                view.removeFromSuperview()
+            }
         }
     }
     
+    //MARK: AdErrorLabel helpers
     private func showAdErrorLabel(description: String) {
         guard let adResponseScrollView = adResponseScrollView else {
             return
@@ -214,7 +217,6 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
     }
     
     private func createAndLoadInterstitial(adUnitID: String) {
-        hideAdErrorLabel()
         interstitial = DFPInterstitial(adUnitID: adUnitID)
         if let interstitial = interstitial {
             interstitial.delegate = self
@@ -337,7 +339,6 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
     // Tells the delegate an ad request loaded an ad.
     func adViewDidReceiveAd(_ bannerView: GADBannerView) {
         print("adViewDidReceiveAd: \(bannerView)")
-        hideAdErrorLabel()
         let adResponseView = UIView()
         adResponseView.addSubview(bannerView)
         bannerView.translatesAutoresizingMaskIntoConstraints = false
@@ -374,7 +375,6 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
         if let interstitial = interstitial {
             if (interstitial.isReady) {
                 interstitial.present(fromRootViewController: self)
-                hideAdErrorLabel()
                 if let bannerView = bannerView {
                     bannerView.removeFromSuperview()
                 }
