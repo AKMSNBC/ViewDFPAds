@@ -16,6 +16,24 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
     @IBOutlet weak var addLocationValuesLabel: UILabel?
     @IBOutlet weak var adResponseScrollView: UIScrollView?
     
+    //MARK: Actions
+    @IBAction func getDisplayAd(_ sender: UIButton) {
+        if (adPickerSelected == Constants.Empty) {
+            return
+        }
+        if (adPickerSelected == Constants.Interstitial) {
+            adUnitID = getAdUnitID(adPickerValue: adPickerSelected)
+            createAndLoadInterstitial(adUnitID: adUnitID)
+            return
+        }
+        createAndLoadBanner()
+    }
+    
+    @IBAction func openDebugOptions(_ sender: UIButton) {
+        let debugOptionsViewController = GADDebugOptionsViewController(adUnitID: "/7231/today")
+        self.present(debugOptionsViewController, animated: true, completion: nil)
+    }
+    
     var adPickerData: [String] = [String]()
     var adPickerSelected: String = Constants.Empty
     var bannerView: DFPBannerView?
@@ -256,24 +274,6 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
     
     func textFieldDidEndEditing(_ textField: UITextField) {
         adUnitID = getAdUnitID(adPickerValue: adPickerSelected)
-    }
-    
-    //MARK: Actions
-    @IBAction func getDisplayAd(_ sender: UIButton) {
-        if (adPickerSelected == Constants.Empty) {
-            return
-        }
-        if (adPickerSelected == Constants.Interstitial) {
-            adUnitID = getAdUnitID(adPickerValue: adPickerSelected)
-            createAndLoadInterstitial(adUnitID: adUnitID)
-            return
-        }
-        createAndLoadBanner()
-    }
-    
-    @IBAction func openDebugOptions(_ sender: UIButton) {
-        let debugOptionsViewController = GADDebugOptionsViewController(adUnitID: "/7231/today")
-        self.present(debugOptionsViewController, animated: true, completion: nil)
     }
     
     //MARK: Location delegate
