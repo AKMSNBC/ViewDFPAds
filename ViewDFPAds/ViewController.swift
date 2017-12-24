@@ -34,6 +34,7 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
         self.present(debugOptionsViewController, animated: true, completion: nil)
     }
     
+    //MARK: locals
     var adPickerData: [String] = [String]()
     var adPickerSelected: String = Constants.Empty
     var bannerView: DFPBannerView?
@@ -60,6 +61,7 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
         view.endEditing(true)
     }
     
+    //MARK: initializations
     private func initLabels() {
         adErrorLabel = UILabel()
         msgLabel = UILabel()
@@ -72,17 +74,6 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
         }
     }
     
-    private func updateAdUnitTextFieldPlaceholder() {
-        if let adUnitTextField = adUnitTextField {
-            if (adPickerSelected == Constants.Interstitial) {
-                adUnitTextField.placeholder = Constants.DFPInterstitialAdUnitID
-            } else {
-                adUnitTextField.placeholder = Constants.DFPAdSizesAdUnitID
-            }
-        }
-    }
-    
-    //MARK: locals
     private func initBannerView() {
         bannerView = DFPBannerView(adSize: kGADAdSizeBanner)
         if let bannerView = bannerView {
@@ -123,6 +114,17 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
             addLocationSwitch.addTarget(self, action: #selector(switchChanged), for: UIControlEvents.valueChanged)
         }
     }
+    
+    private func updateAdUnitTextFieldPlaceholder() {
+        if let adUnitTextField = adUnitTextField {
+            if (adPickerSelected == Constants.Interstitial) {
+                adUnitTextField.placeholder = Constants.DFPInterstitialAdUnitID
+            } else {
+                adUnitTextField.placeholder = Constants.DFPAdSizesAdUnitID
+            }
+        }
+    }
+    
     
     @objc private func switchChanged(sender: UISwitch) {
         updateAddLocationValuesLabel()
@@ -358,7 +360,15 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
     func adView(_ bannerView: GADBannerView, didFailToReceiveAdWithError error: GADRequestError) {
         showAdErrorLabel(description: error.localizedDescription)
     }
-
+    
+    // MARK: GADAdSizeDelegate
+    /// Called before the ad view changes to the new size.
+    func adView(_ bannerView: GADBannerView, willChangeAdSizeTo size: GADAdSize) {
+        // The bannerView calls this method on its adSizeDelegate object before the banner updates its
+        // size, allowing the application to adjust any views that may be affected by the new ad size.
+        print("Make your app layout changes here, if necessary. New banner ad size will be \(size).")
+    }
+    
     //MARK: GADInterstitialDelegate
     func interstitialDidReceiveAd(_ ad: GADInterstitial) {
         if let interstitial = interstitial {
@@ -387,13 +397,4 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
     func interstitial(_ ad: GADInterstitial, didFailToReceiveAdWithError error: GADRequestError) {
         showAdErrorLabel(description: error.localizedDescription)
     }
-    
-    // MARK: GADAdSizeDelegate
-    /// Called before the ad view changes to the new size.
-    func adView(_ bannerView: GADBannerView, willChangeAdSizeTo size: GADAdSize) {
-        // The bannerView calls this method on its adSizeDelegate object before the banner updates its
-        // size, allowing the application to adjust any views that may be affected by the new ad size.
-        print("Make your app layout changes here, if necessary. New banner ad size will be \(size).")
-    }
-    
 }
