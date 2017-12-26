@@ -23,7 +23,7 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
             return
         }
         if (adPickerSelected == Constants.Interstitial) {
-            dfpAdsModel.adUnitID = getAdUnitID(adPickerValue: adPickerSelected)
+            adUnitIDUpdate(adPickerValue: adPickerSelected)
             createAndLoadInterstitial()
             return
         }
@@ -129,21 +129,24 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
         addLocationValuesLabelUpdate()
     }
     
-    private func getAdUnitID (adPickerValue: String) -> String {
+    private func adUnitIDUpdate (adPickerValue: String) {
         var adUnitId = Constants.DFPAdSizesAdUnitID
         if (adPickerValue == Constants.Interstitial) {
             adUnitId = Constants.DFPInterstitialAdUnitID
         }
         guard let adUnitTextField = adUnitTextField else {
-            return adUnitId
+            dfpAdsModel.adUnitID = adUnitId
+            return
         }
         guard let adUnitTextFieldText = adUnitTextField.text else {
-            return adUnitId
+            dfpAdsModel.adUnitID = adUnitId
+            return
         }
         if (adUnitTextFieldText.isEmpty == false) {
-            return adUnitTextFieldText
+            dfpAdsModel.adUnitID = adUnitTextFieldText
+            return
         }
-        return adUnitId
+        dfpAdsModel.adUnitID = adUnitId
     }
     
     //MARK: adResponseScrollView Helpers
@@ -241,7 +244,7 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
     private func createAndLoadBanner() {
         if let bannerView = bannerView {
             let adSizes = getAdSizes(adPickerValue: adPickerSelected)
-            dfpAdsModel.adUnitID = getAdUnitID(adPickerValue: adPickerSelected)
+            adUnitIDUpdate(adPickerValue: adPickerSelected)
             bannerView.adUnitID = dfpAdsModel.adUnitID
             bannerView.validAdSizes = adSizes
             let request = dfpAdsModel.getDFPRequest()
@@ -273,7 +276,7 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
     
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
         adPickerSelected = adPickerData[row]
-        dfpAdsModel.adUnitID = getAdUnitID(adPickerValue: adPickerSelected)
+        adUnitIDUpdate(adPickerValue: adPickerSelected)
         adUnitTextFieldPlaceholderUpdate()
     }
     
@@ -287,7 +290,7 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
     }
     
     func textFieldDidEndEditing(_ textField: UITextField) {
-        dfpAdsModel.adUnitID = getAdUnitID(adPickerValue: adPickerSelected)
+        adUnitIDUpdate(adPickerValue: adPickerSelected)
     }
     
     //MARK: UIScrollViewDelegate
