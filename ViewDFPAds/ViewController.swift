@@ -18,6 +18,7 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
     //MARK: Actions
     @IBAction func getDisplayAd(_ sender: UIButton) {
         adResponseScrollViewClear()
+        addLocationValuesLabelUpdate()
         if (adPickerSelected == Constants.Empty) {
             return
         }
@@ -43,6 +44,7 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
     var adErrorLabel: UILabel?
     var msgLabel: UILabel?
     var dfpAdsModel: DFPAdsModel = DFPAdsModel()
+    var isAddLocation: Bool = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -119,6 +121,12 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
     
     
     @objc private func switchChanged(sender: UISwitch) {
+        isAddLocation = false
+        if let addLocationSwitch = addLocationSwitch {
+            if addLocationSwitch.isOn {
+                isAddLocation = true
+            }
+        }
         addLocationValuesLabelUpdate()
     }
     
@@ -137,20 +145,6 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
             return adUnitTextFieldText
         }
         return adUnitId
-    }
-    
-    private func getDFPRequest() -> DFPRequest {
-        let request = DFPRequest()
-        if let addLocationSwitch = addLocationSwitch {
-            if (addLocationSwitch.isOn) {
-                if let location = dfpAdsModel.getLocation() {
-                    request.setLocationWithLatitude(CGFloat(location.coordinate.latitude), longitude: CGFloat(location.coordinate.latitude), accuracy: 100)
-                    addLocationValuesLabelUpdate()
-                }
-            }
-        }
-        print("request \(request.debugDescription)")
-        return request
     }
     
     //MARK: adResponseScrollView Helpers
@@ -251,7 +245,7 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
             adUnitID = getAdUnitID(adPickerValue: adPickerSelected)
             bannerView.adUnitID = adUnitID
             bannerView.validAdSizes = adSizes
-            let request = getDFPRequest()
+            let request = dfpAdsModel.getDFPRequest(isAddLocation: isAddLocation)
             bannerView.load(request)
         }
     }
@@ -260,7 +254,7 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
         interstitial = DFPInterstitial(adUnitID: adUnitID)
         if let interstitial = interstitial {
             interstitial.delegate = self
-            let request = getDFPRequest()
+            let request = dfpAdsModel.getDFPRequest(isAddLocation: isAddLocation)
             interstitial.load(request)
         }
     }

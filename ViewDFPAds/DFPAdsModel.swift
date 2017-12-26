@@ -4,6 +4,7 @@
 //
 
 import Foundation
+import GoogleMobileAds
 import CoreLocation
 
 class DFPAdsModel: NSObject, CLLocationManagerDelegate {
@@ -40,5 +41,17 @@ class DFPAdsModel: NSObject, CLLocationManagerDelegate {
             return location
         }
         return nil
+    }
+    
+    
+    func getDFPRequest(isAddLocation: Bool) -> DFPRequest {
+        let request = DFPRequest()
+        if (isAddLocation == true) {
+            if let location = getLocation() {
+                request.setLocationWithLatitude(CGFloat(location.coordinate.latitude), longitude: CGFloat(location.coordinate.latitude), accuracy: 100)
+            }
+        }
+        print("request \(request.debugDescription)")
+        return request
     }
 }
