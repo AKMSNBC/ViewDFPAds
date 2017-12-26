@@ -17,6 +17,7 @@
 		9E27C7F81FC6686000E713E7 /* Podfile in Resources */ = {isa = PBXBuildFile; fileRef = 9E27C7F71FC6686000E713E7 /* Podfile */; };
 		9E27C7FA1FC66F9B00E713E7 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 9E27C7F91FC66F9B00E713E7 /* README.md */; };
 		9E27C7FC1FC6CB0800E713E7 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E27C7FB1FC6CB0800E713E7 /* Constants.swift */; };
+		9EE2DA4A1FF27A3100BE49FC /* DFPAdsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EE2DA491FF27A3100BE49FC /* DFPAdsModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -45,6 +46,7 @@
 		9E27C7F71FC6686000E713E7 /* Podfile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Podfile; sourceTree = "<group>"; };
 		9E27C7F91FC66F9B00E713E7 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		9E27C7FB1FC6CB0800E713E7 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		9EE2DA491FF27A3100BE49FC /* DFPAdsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DFPAdsModel.swift; sourceTree = "<group>"; };
 		FA6999E2784EF871BA4710CC /* Pods-ViewDFPAds.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ViewDFPAds.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ViewDFPAds/Pods-ViewDFPAds.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -108,6 +110,7 @@
 				9E27C7E01FC666AF00E713E7 /* LaunchScreen.storyboard */,
 				9E27C7E31FC666AF00E713E7 /* Info.plist */,
 				9E27C7FB1FC6CB0800E713E7 /* Constants.swift */,
+				9EE2DA491FF27A3100BE49FC /* DFPAdsModel.swift */,
 			);
 			path = ViewDFPAds;
 			sourceTree = "<group>";
@@ -291,6 +294,7 @@
 				9E27C7DA1FC666AF00E713E7 /* ViewController.swift in Sources */,
 				9E27C7D81FC666AF00E713E7 /* AppDelegate.swift in Sources */,
 				9E27C7FC1FC6CB0800E713E7 /* Constants.swift in Sources */,
+				9EE2DA4A1FF27A3100BE49FC /* DFPAdsModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
