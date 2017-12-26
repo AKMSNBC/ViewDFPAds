@@ -218,7 +218,7 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
             return
         }
         if (addLocationSwitch.isOn){
-            if let location = dfpAdsModel.getLocation() {
+            if let location = dfpAdsModel.location {
                 let message = "\(location.coordinate.latitude.description), \(location.coordinate.longitude.description)"
                 addLocationValuesLabelUpdate(message: message)
             }  else {

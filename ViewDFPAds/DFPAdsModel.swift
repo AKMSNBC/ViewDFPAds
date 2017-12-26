@@ -9,12 +9,15 @@ import CoreLocation
 
 class DFPAdsModel: NSObject, CLLocationManagerDelegate {
     
+    private var locationManager = CLLocationManager()
+    private var _location: CLLocation? = nil
+    
     static let singletonInstance = DFPAdsModel()
     
     var isAddLocation: Bool = false
-    
-    private var locationManager = CLLocationManager()
-    private var location: CLLocation? = nil
+    var location: CLLocation? {
+        return _location
+    }
     
     override init() {
         super.init()
@@ -36,22 +39,14 @@ class DFPAdsModel: NSObject, CLLocationManagerDelegate {
     //MARK: Location delegate
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         if let locationsLast = locations.last {
-            location = locationsLast as CLLocation
+            _location = locationsLast as CLLocation
         }
     }
-    
-    func getLocation() -> CLLocation? {
-        if let location = location {
-            return location
-        }
-        return nil
-    }
-    
     
     func getDFPRequest() -> DFPRequest {
         let request = DFPRequest()
         if (isAddLocation == true) {
-            if let location = getLocation() {
+            if let location = location {
                 request.setLocationWithLatitude(CGFloat(location.coordinate.latitude), longitude: CGFloat(location.coordinate.latitude), accuracy: 100)
                 print("added location: \(location.coordinate)")
             }
