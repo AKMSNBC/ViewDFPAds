@@ -6,7 +6,44 @@ import GoogleMobileAds
 import UIKit
 import CoreLocation
 
-class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegate, UIPickerViewDataSource, CLLocationManagerDelegate, UIScrollViewDelegate, GADBannerViewDelegate, GADAdSizeDelegate, GADInterstitialDelegate {
+class DFPAdsModel: NSObject, CLLocationManagerDelegate {
+    
+    private var locationManager = CLLocationManager()
+    private var location: CLLocation? = nil
+    
+    override init() {
+        super.init()
+        if (CLLocationManager.locationServicesEnabled()) {
+            initLocation()
+        }
+    }
+    
+    private func initLocation() {
+        if (CLLocationManager.locationServicesEnabled()) {
+            locationManager.delegate = self
+            locationManager.desiredAccuracy = kCLLocationAccuracyBest
+            locationManager.requestAlwaysAuthorization()
+            locationManager.requestWhenInUseAuthorization()
+            locationManager.startUpdatingLocation()
+        }
+    }
+    
+    //MARK: Location delegate
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        if let locationsLast = locations.last {
+            location = locationsLast as CLLocation
+        }
+    }
+    
+    func getLocation() -> CLLocation? {
+        if let location = location {
+            return location
+        }
+        return nil
+    }
+}
+
+class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegate, UIPickerViewDataSource, UIScrollViewDelegate, GADBannerViewDelegate, GADAdSizeDelegate, GADInterstitialDelegate {
 
     //MARK: Properties
     @IBOutlet weak var adUnitTextField: UITextField?
@@ -39,11 +76,10 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
     var adPickerSelected: String = Constants.Empty
     var bannerView: DFPBannerView?
     var interstitial: DFPInterstitial?
-    var locationManager = CLLocationManager()
-    var location: CLLocation? = nil
     var adUnitID = Constants.DFPAdSizesAdUnitID
     var adErrorLabel: UILabel?
     var msgLabel: UILabel?
+    var dfpAdsModel: DFPAdsModel = DFPAdsModel()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -103,13 +139,6 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
     }
     
     private func initLocation() {
-        if (CLLocationManager.locationServicesEnabled()) {
-            locationManager.delegate = self
-            locationManager.desiredAccuracy = kCLLocationAccuracyBest
-            locationManager.requestAlwaysAuthorization()
-            locationManager.requestWhenInUseAuthorization()
-            locationManager.startUpdatingLocation()
-        }
         if let addLocationSwitch = addLocationSwitch {
             addLocationSwitch.addTarget(self, action: #selector(switchChanged), for: UIControlEvents.valueChanged)
         }
@@ -151,13 +180,11 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
         let request = DFPRequest()
         if let addLocationSwitch = addLocationSwitch {
             if (addLocationSwitch.isOn) {
-                if let location = location {
-                    if (CLLocationManager.locationServicesEnabled()) {
-                        request.setLocationWithLatitude(CGFloat(location.coordinate.latitude), longitude: CGFloat(location.coordinate.latitude), accuracy: 100)
-                        addLocationValuesLabelUpdate()
-                    } else {
-                        addLocationValuesLabelUpdate(message: Constants.ServiceDisabled)
-                    }
+                if let location = dfpAdsModel.getLocation() {
+                    request.setLocationWithLatitude(CGFloat(location.coordinate.latitude), longitude: CGFloat(location.coordinate.latitude), accuracy: 100)
+                    addLocationValuesLabelUpdate()
+                } else {
+                    addLocationValuesLabelUpdate(message: Constants.ServiceDisabled)
                 }
             }
         }
@@ -236,7 +263,7 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
         guard let addLocationSwitch = addLocationSwitch else {
             return
         }
-        guard let location = location else {
+        guard let location = dfpAdsModel.getLocation() else {
             return
         }
         if (addLocationSwitch.isOn){
@@ -293,13 +320,6 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
         adPickerSelected = adPickerData[row]
         adUnitID = getAdUnitID(adPickerValue: adPickerSelected)
         adUnitTextFieldPlaceholderUpdate()
-    }
-    
-    //MARK: Location delegate
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        if let locationsLast = locations.last {
-            location = locationsLast as CLLocation
-        }
     }
     
     //MARK: UITextFieldDelegates
