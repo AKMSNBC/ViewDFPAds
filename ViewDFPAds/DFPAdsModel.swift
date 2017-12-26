@@ -18,6 +18,7 @@ class DFPAdsModel: NSObject, CLLocationManagerDelegate {
     var location: CLLocation? {
         return _location
     }
+    var adUnitID: String = Constants.DFPAdSizesAdUnitID
     
     override init() {
         super.init()

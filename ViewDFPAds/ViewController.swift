@@ -23,15 +23,15 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
             return
         }
         if (adPickerSelected == Constants.Interstitial) {
-            adUnitID = getAdUnitID(adPickerValue: adPickerSelected)
-            createAndLoadInterstitial(adUnitID: adUnitID)
+            dfpAdsModel.adUnitID = getAdUnitID(adPickerValue: adPickerSelected)
+            createAndLoadInterstitial()
             return
         }
         createAndLoadBanner()
     }
     
     @IBAction func openDebugOptions(_ sender: UIButton) {
-        let debugOptionsViewController = GADDebugOptionsViewController(adUnitID: "/7231/today")
+        let debugOptionsViewController = GADDebugOptionsViewController(adUnitID: dfpAdsModel.adUnitID)
         self.present(debugOptionsViewController, animated: true, completion: nil)
     }
     
@@ -40,7 +40,7 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
     var adPickerSelected: String = Constants.Empty
     var bannerView: DFPBannerView?
     var interstitial: DFPInterstitial?
-    var adUnitID = Constants.DFPAdSizesAdUnitID
+
     var adErrorLabel: UILabel?
     var msgLabel: UILabel?
     var dfpAdsModel: DFPAdsModel = DFPAdsModel.singletonInstance
@@ -77,7 +77,7 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
     private func initBannerView() {
         bannerView = DFPBannerView(adSize: kGADAdSizeBanner)
         if let bannerView = bannerView {
-            bannerView.adUnitID = adUnitID
+            bannerView.adUnitID = dfpAdsModel.adUnitID
             bannerView.rootViewController = self
             bannerView.adSizeDelegate = self
             bannerView.delegate = self
@@ -241,16 +241,16 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
     private func createAndLoadBanner() {
         if let bannerView = bannerView {
             let adSizes = getAdSizes(adPickerValue: adPickerSelected)
-            adUnitID = getAdUnitID(adPickerValue: adPickerSelected)
-            bannerView.adUnitID = adUnitID
+            dfpAdsModel.adUnitID = getAdUnitID(adPickerValue: adPickerSelected)
+            bannerView.adUnitID = dfpAdsModel.adUnitID
             bannerView.validAdSizes = adSizes
             let request = dfpAdsModel.getDFPRequest()
             bannerView.load(request)
         }
     }
     
-    private func createAndLoadInterstitial(adUnitID: String) {
-        interstitial = DFPInterstitial(adUnitID: adUnitID)
+    private func createAndLoadInterstitial() {
+        interstitial = DFPInterstitial(adUnitID: dfpAdsModel.adUnitID)
         if let interstitial = interstitial {
             interstitial.delegate = self
             let request = dfpAdsModel.getDFPRequest()
@@ -273,7 +273,7 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
     
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
         adPickerSelected = adPickerData[row]
-        adUnitID = getAdUnitID(adPickerValue: adPickerSelected)
+        dfpAdsModel.adUnitID = getAdUnitID(adPickerValue: adPickerSelected)
         adUnitTextFieldPlaceholderUpdate()
     }
     
@@ -287,7 +287,7 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
     }
     
     func textFieldDidEndEditing(_ textField: UITextField) {
-        adUnitID = getAdUnitID(adPickerValue: adPickerSelected)
+        dfpAdsModel.adUnitID = getAdUnitID(adPickerValue: adPickerSelected)
     }
     
     //MARK: UIScrollViewDelegate
