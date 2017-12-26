@@ -43,8 +43,7 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
     var adUnitID = Constants.DFPAdSizesAdUnitID
     var adErrorLabel: UILabel?
     var msgLabel: UILabel?
-    var dfpAdsModel: DFPAdsModel = DFPAdsModel()
-    var isAddLocation: Bool = false
+    var dfpAdsModel: DFPAdsModel = DFPAdsModel.singletonInstance
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -121,10 +120,10 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
     
     
     @objc private func switchChanged(sender: UISwitch) {
-        isAddLocation = false
+        dfpAdsModel.isAddLocation = false
         if let addLocationSwitch = addLocationSwitch {
             if addLocationSwitch.isOn {
-                isAddLocation = true
+                dfpAdsModel.isAddLocation = true
             }
         }
         addLocationValuesLabelUpdate()
@@ -245,7 +244,7 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
             adUnitID = getAdUnitID(adPickerValue: adPickerSelected)
             bannerView.adUnitID = adUnitID
             bannerView.validAdSizes = adSizes
-            let request = dfpAdsModel.getDFPRequest(isAddLocation: isAddLocation)
+            let request = dfpAdsModel.getDFPRequest()
             bannerView.load(request)
         }
     }
@@ -254,7 +253,7 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
         interstitial = DFPInterstitial(adUnitID: adUnitID)
         if let interstitial = interstitial {
             interstitial.delegate = self
-            let request = dfpAdsModel.getDFPRequest(isAddLocation: isAddLocation)
+            let request = dfpAdsModel.getDFPRequest()
             interstitial.load(request)
         }
     }

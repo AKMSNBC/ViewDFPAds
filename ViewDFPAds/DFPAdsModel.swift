@@ -9,6 +9,10 @@ import CoreLocation
 
 class DFPAdsModel: NSObject, CLLocationManagerDelegate {
     
+    static let singletonInstance = DFPAdsModel()
+    
+    var isAddLocation: Bool = false
+    
     private var locationManager = CLLocationManager()
     private var location: CLLocation? = nil
     
@@ -44,11 +48,12 @@ class DFPAdsModel: NSObject, CLLocationManagerDelegate {
     }
     
     
-    func getDFPRequest(isAddLocation: Bool) -> DFPRequest {
+    func getDFPRequest() -> DFPRequest {
         let request = DFPRequest()
         if (isAddLocation == true) {
             if let location = getLocation() {
                 request.setLocationWithLatitude(CGFloat(location.coordinate.latitude), longitude: CGFloat(location.coordinate.latitude), accuracy: 100)
+                print("added location: \(location.coordinate)")
             }
         }
         print("request \(request.debugDescription)")
