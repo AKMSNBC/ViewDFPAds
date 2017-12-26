@@ -183,8 +183,6 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
                 if let location = dfpAdsModel.getLocation() {
                     request.setLocationWithLatitude(CGFloat(location.coordinate.latitude), longitude: CGFloat(location.coordinate.latitude), accuracy: 100)
                     addLocationValuesLabelUpdate()
-                } else {
-                    addLocationValuesLabelUpdate(message: Constants.ServiceDisabled)
                 }
             }
         }
@@ -263,12 +261,13 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
         guard let addLocationSwitch = addLocationSwitch else {
             return
         }
-        guard let location = dfpAdsModel.getLocation() else {
-            return
-        }
         if (addLocationSwitch.isOn){
-            let message = "\(location.coordinate.latitude.description), \(location.coordinate.longitude.description)"
-            addLocationValuesLabelUpdate(message: message)
+            if let location = dfpAdsModel.getLocation() {
+                let message = "\(location.coordinate.latitude.description), \(location.coordinate.longitude.description)"
+                addLocationValuesLabelUpdate(message: message)
+            }  else {
+                addLocationValuesLabelUpdate(message: Constants.ServiceDisabled)
+            }
         }
     }
     
