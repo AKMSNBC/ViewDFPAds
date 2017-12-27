@@ -37,7 +37,6 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
     }
     
     //MARK: locals
-    var adPickerData: [String] = [String]()
     var bannerView: DFPBannerView?
     var interstitial: DFPInterstitial?
     var adErrorLabel: UILabel?
@@ -88,11 +87,6 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
             adPicker.delegate = self
             adPicker.dataSource = self
         }
-        for adPickerValue in Constants.AdPickerDictionaryLiteral {
-            adPickerData.append(adPickerValue.key)
-        }
-        print("adPickerData: \(adPickerData)")
-        dfpAdsModel.adPickerSelected = adPickerData[0]
     }
     
     private func initScrollView() {
@@ -235,15 +229,15 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
     }
     
     func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
-        return adPickerData.count
+        return dfpAdsModel.adPickerData.count
     }
     
     func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
-        return adPickerData[row]
+        return dfpAdsModel.adPickerData[row]
     }
     
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-        dfpAdsModel.adPickerSelected = adPickerData[row]
+        dfpAdsModel.adPickerSelected = dfpAdsModel.adPickerData[row]
         adUnitIDUpdate()
         adUnitTextFieldPlaceholderUpdate()
     }

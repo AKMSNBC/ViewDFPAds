@@ -20,12 +20,22 @@ class DFPAdsModel: NSObject, CLLocationManagerDelegate {
     }
     var adUnitID: String = Constants.DFPAdSizesAdUnitID
     var adPickerSelected: String = Constants.Empty
+    var adPickerData: [String] = [String]()
     
     override init() {
         super.init()
         if (CLLocationManager.locationServicesEnabled()) {
             initLocation()
         }
+        initAdPickerData()
+    }
+    
+    private func initAdPickerData() {
+        for adPickerValue in Constants.AdPickerDictionaryLiteral {
+            adPickerData.append(adPickerValue.key)
+        }
+        print("adPickerData: \(adPickerData)")
+        adPickerSelected = adPickerData[0]
     }
     
     private func initLocation() {
