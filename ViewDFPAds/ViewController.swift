@@ -19,14 +19,16 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
     @IBAction func getDisplayAd(_ sender: UIButton) {
         adResponseScrollViewClear()
         addLocationValuesLabelUpdate()
-        if (dfpAdsModel.adPickerSelected == Constants.Empty) {
-            return
-        }
-        if (dfpAdsModel.adPickerSelected == Constants.Interstitial) {
+        
+        switch dfpAdsModel.adPickerSelected {
+        case Constants.Empty:
+            break
+        case Constants.Interstitial:
             createAndLoadInterstitial()
-            return
+            break
+        default:
+            createAndLoadBanner()
         }
-        createAndLoadBanner()
     }
     
     @IBAction func openDebugOptions(_ sender: UIButton) {
