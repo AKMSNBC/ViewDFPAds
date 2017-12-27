@@ -130,19 +130,7 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
     }
     
     private func adUnitIDUpdate (adPickerValue: String) {
-        var adUnitId = Constants.DFPAdSizesAdUnitID
-        if (adPickerValue == Constants.Interstitial) {
-            adUnitId = Constants.DFPInterstitialAdUnitID
-        }
-        if let adUnitTextFieldText = adUnitTextField?.text {
-            if (adUnitTextFieldText.isEmpty == false) {
-                dfpAdsModel.adUnitID = adUnitTextFieldText
-            } else {
-                dfpAdsModel.adUnitID = adUnitId
-            }
-            return
-        }
-        dfpAdsModel.adUnitID = adUnitId
+        dfpAdsModel.adUnitIDUpdate(adPickerValue: adPickerValue, adUnitTextFieldText: adUnitTextField?.text)
     }
     
     //MARK: adResponseScrollView Helpers
