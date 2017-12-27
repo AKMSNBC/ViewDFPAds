@@ -57,6 +57,13 @@ class DFPAdsModel: NSObject, CLLocationManagerDelegate {
         }
     }
     
+    func getAdUnitTextFieldPlaceholder() -> String {
+        if (adPickerSelected == Constants.Interstitial) {
+            return Constants.DFPInterstitialAdUnitID
+        }
+        return Constants.DFPAdSizesAdUnitID
+    }
+    
     func getDFPRequest() -> DFPRequest {
         let request = DFPRequest()
         if (isAddLocation == true) {

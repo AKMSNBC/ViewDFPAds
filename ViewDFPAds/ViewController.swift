@@ -108,14 +108,9 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
     
     private func adUnitTextFieldPlaceholderUpdate() {
         if let adUnitTextField = adUnitTextField {
-            if (dfpAdsModel.adPickerSelected == Constants.Interstitial) {
-                adUnitTextField.placeholder = Constants.DFPInterstitialAdUnitID
-            } else {
-                adUnitTextField.placeholder = Constants.DFPAdSizesAdUnitID
-            }
+            adUnitTextField.placeholder = dfpAdsModel.getAdUnitTextFieldPlaceholder()
         }
     }
-    
     
     @objc private func switchChanged(sender: UISwitch) {
         dfpAdsModel.isAddLocation = false
