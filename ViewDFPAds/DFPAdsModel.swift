@@ -19,6 +19,7 @@ class DFPAdsModel: NSObject, CLLocationManagerDelegate {
         return _location
     }
     var adUnitID: String = Constants.DFPAdSizesAdUnitID
+    var adPickerSelected: String = Constants.Empty
     
     override init() {
         super.init()
