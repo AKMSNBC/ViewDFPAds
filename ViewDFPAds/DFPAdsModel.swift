@@ -9,9 +9,11 @@ import CoreLocation
 
 class DFPAdsModel: NSObject, CLLocationManagerDelegate {
     
+    //MARK: private properties
     private var locationManager = CLLocationManager()
     private var _location: CLLocation? = nil
     
+    //MARK: internal properties
     static let singletonInstance = DFPAdsModel()
     
     var isAddLocation: Bool = false
@@ -22,6 +24,7 @@ class DFPAdsModel: NSObject, CLLocationManagerDelegate {
     var adPickerSelected: String = Constants.Empty
     var adPickerData: [String] = [String]()
     
+    //MARK: init
     override init() {
         super.init()
         if (CLLocationManager.locationServicesEnabled()) {
@@ -30,6 +33,7 @@ class DFPAdsModel: NSObject, CLLocationManagerDelegate {
         initAdPickerData()
     }
     
+    //MARK: private methods
     private func initAdPickerData() {
         for adPickerValue in Constants.AdPickerDictionaryLiteral {
             adPickerData.append(adPickerValue.key)
@@ -48,13 +52,7 @@ class DFPAdsModel: NSObject, CLLocationManagerDelegate {
         }
     }
     
-    //MARK: Location delegate
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        if let locationsLast = locations.last {
-            _location = locationsLast as CLLocation
-        }
-    }
-    
+    //MARK: internal methods
     func adUnitIDUpdate(adUnitTextFieldText: String?) {
         adUnitID = Constants.DFPAdSizesAdUnitID
         if (adPickerSelected == Constants.Interstitial) {
@@ -95,5 +93,12 @@ class DFPAdsModel: NSObject, CLLocationManagerDelegate {
         }
         print("request \(request.debugDescription)")
         return request
+    }
+    
+    //MARK: Location delegate
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        if let locationsLast = locations.last {
+            _location = locationsLast as CLLocation
+        }
     }
 }
