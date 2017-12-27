@@ -23,7 +23,6 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
             return
         }
         if (dfpAdsModel.adPickerSelected == Constants.Interstitial) {
-            adUnitIDUpdate()
             createAndLoadInterstitial()
             return
         }
@@ -230,6 +229,7 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
     }
     
     private func createAndLoadInterstitial() {
+        adUnitIDUpdate()
         interstitial = DFPInterstitial(adUnitID: dfpAdsModel.adUnitID)
         if let interstitial = interstitial {
             interstitial.delegate = self
