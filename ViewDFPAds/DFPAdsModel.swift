@@ -45,9 +45,9 @@ class DFPAdsModel: NSObject, CLLocationManagerDelegate {
         }
     }
     
-    func adUnitIDUpdate (adPickerValue: String, adUnitTextFieldText: String?) {
+    func adUnitIDUpdate(adUnitTextFieldText: String?) {
         adUnitID = Constants.DFPAdSizesAdUnitID
-        if (adPickerValue == Constants.Interstitial) {
+        if (adPickerSelected == Constants.Interstitial) {
             adUnitID = Constants.DFPInterstitialAdUnitID
         }
         if let adUnitTextFieldText = adUnitTextFieldText {

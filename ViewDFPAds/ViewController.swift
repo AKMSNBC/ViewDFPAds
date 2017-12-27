@@ -23,7 +23,7 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
             return
         }
         if (dfpAdsModel.adPickerSelected == Constants.Interstitial) {
-            adUnitIDUpdate(adPickerValue: dfpAdsModel.adPickerSelected)
+            adUnitIDUpdate()
             createAndLoadInterstitial()
             return
         }
@@ -127,8 +127,8 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
         addLocationValuesLabelUpdate()
     }
     
-    private func adUnitIDUpdate (adPickerValue: String) {
-        dfpAdsModel.adUnitIDUpdate(adPickerValue: adPickerValue, adUnitTextFieldText: adUnitTextField?.text)
+    private func adUnitIDUpdate () {
+        dfpAdsModel.adUnitIDUpdate(adUnitTextFieldText: adUnitTextField?.text)
     }
     
     //MARK: adResponseScrollView Helpers
@@ -226,7 +226,7 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
     private func createAndLoadBanner() {
         if let bannerView = bannerView {
             let adSizes = getAdSizes(adPickerValue: dfpAdsModel.adPickerSelected)
-            adUnitIDUpdate(adPickerValue: dfpAdsModel.adPickerSelected)
+            adUnitIDUpdate()
             bannerView.adUnitID = dfpAdsModel.adUnitID
             bannerView.validAdSizes = adSizes
             let request = dfpAdsModel.getDFPRequest()
@@ -258,7 +258,7 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
     
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
         dfpAdsModel.adPickerSelected = adPickerData[row]
-        adUnitIDUpdate(adPickerValue: dfpAdsModel.adPickerSelected)
+        adUnitIDUpdate()
         adUnitTextFieldPlaceholderUpdate()
     }
     
@@ -272,7 +272,7 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
     }
     
     func textFieldDidEndEditing(_ textField: UITextField) {
-        adUnitIDUpdate(adPickerValue: dfpAdsModel.adPickerSelected)
+        adUnitIDUpdate()
     }
     
     //MARK: UIScrollViewDelegate
