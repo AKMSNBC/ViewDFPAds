@@ -134,16 +134,12 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
         if (adPickerValue == Constants.Interstitial) {
             adUnitId = Constants.DFPInterstitialAdUnitID
         }
-        guard let adUnitTextField = adUnitTextField else {
-            dfpAdsModel.adUnitID = adUnitId
-            return
-        }
-        guard let adUnitTextFieldText = adUnitTextField.text else {
-            dfpAdsModel.adUnitID = adUnitId
-            return
-        }
-        if (adUnitTextFieldText.isEmpty == false) {
-            dfpAdsModel.adUnitID = adUnitTextFieldText
+        if let adUnitTextFieldText = adUnitTextField?.text {
+            if (adUnitTextFieldText.isEmpty == false) {
+                dfpAdsModel.adUnitID = adUnitTextFieldText
+            } else {
+                dfpAdsModel.adUnitID = adUnitId
+            }
             return
         }
         dfpAdsModel.adUnitID = adUnitId
