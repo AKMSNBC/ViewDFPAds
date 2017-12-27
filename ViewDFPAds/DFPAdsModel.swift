@@ -64,6 +64,17 @@ class DFPAdsModel: NSObject, CLLocationManagerDelegate {
         return Constants.DFPAdSizesAdUnitID
     }
     
+    func getAdSizes() -> [NSValue] {
+        var adSizes = [NSValue]()
+        for adPickerValue in Constants.AdPickerDictionaryLiteral {
+            if (adPickerSelected == adPickerValue.key) {
+                adSizes = adPickerValue.value
+                break
+            }
+        }
+        return adSizes
+    }
+    
     func getDFPRequest() -> DFPRequest {
         let request = DFPRequest()
         if (isAddLocation == true) {

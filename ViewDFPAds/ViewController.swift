@@ -24,10 +24,10 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
         case Constants.Empty:
             break
         case Constants.Interstitial:
-            createAndLoadInterstitial()
+            interstitialCreateAndLoad()
             break
         default:
-            createAndLoadBanner()
+            bannerCreateAndLoad()
         }
     }
     
@@ -208,20 +208,9 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
         }
     }
     
-    private func getAdSizes(adPickerValue: String) -> [NSValue] {
-        var adSizes = [NSValue]()
-        for adPickerValue in Constants.AdPickerDictionaryLiteral {
-            if (dfpAdsModel.adPickerSelected == adPickerValue.key) {
-                adSizes = adPickerValue.value
-                break
-            }
-        }
-        return adSizes
-    }
-    
-    private func createAndLoadBanner() {
+    private func bannerCreateAndLoad() {
         if let bannerView = bannerView {
-            let adSizes = getAdSizes(adPickerValue: dfpAdsModel.adPickerSelected)
+            let adSizes = dfpAdsModel.getAdSizes()
             adUnitIDUpdate()
             bannerView.adUnitID = dfpAdsModel.adUnitID
             bannerView.validAdSizes = adSizes
@@ -230,7 +219,7 @@ class ViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegat
         }
     }
     
-    private func createAndLoadInterstitial() {
+    private func interstitialCreateAndLoad() {
         adUnitIDUpdate()
         interstitial = DFPInterstitial(adUnitID: dfpAdsModel.adUnitID)
         if let interstitial = interstitial {
