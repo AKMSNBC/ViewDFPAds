@@ -38,6 +38,12 @@ Touch `Display Ad` button to show default ad.
 
 ![iphone8defaultad screenshot](/images/iphone8defaultad.png)
 
+Touch `Debug Ad` button to open debug ad panel.
+Follow Google Ads SDK instructions to debug ads in DFP.
+[https://developers.google.com/mobile-ads-sdk/docs/dfp/ios/debug](https://developers.google.com/mobile-ads-sdk/docs/dfp/ios/debug)
+
+![iphone8debugad screenshot](/images/iphone8debugad.png)
+
 Enter custom AdUnit Id.
 
 ![iphone8adunit screenshot](/images/iphone8adunit.png)
