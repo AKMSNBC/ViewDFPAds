@@ -54,16 +54,17 @@ Enter custom AdUnit Id.
 
 Use picker to select ad type.
 
-![iphone8picker creenshot](/images/iphone8picker.png)
-
-Example error message.
-
-![iphone8error creenshot](/images/iphone8error.png)
+![iphone8picker screenshot](/images/iphone8picker.png)
 
 Example interstitial ad.
 
-![iphone8interstitial creenshot](/images/iphone8interstitial.png)
+![iphone8interstitial screenshot](/images/iphone8interstitial.png)
 
 Add location data to ad request.
 
 ![iphone8location screenshot](/images/iphone8location.png)
+
+Example error messages.
+
+![iphone8error screenshot](/images/iphone8error.png)
+![iphone8errorrequest screenshot](/images/iphone8errorrequest.png)
